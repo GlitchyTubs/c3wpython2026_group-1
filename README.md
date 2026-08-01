@@ -1,2 +1,3 @@
 # c3wpython2026_group-1
 Project solum will be an action filled roguelike game, allowing you to move through rooms and fight enemies.
+Premise: In this futuristic new world, everything has gone south. Technology has advanced but so has a virus. Infecting everyone and forcing them into hiding in giant cities, blocked off by walls created by a corrupt government. You, are a apart of a rebel group, living outside the walls while fighting off goons of robotic guards when your sent on a mission to find "The Holy Grail" - an ancient artifact that the government is also looking for. Delve deep underground, fight off the goons and discover what this ancient artifact is.
