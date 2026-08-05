@@ -340,7 +340,7 @@ def sword_evade_phase():
             screen.blit(robot_sword.image,robot_sword.rect)
             sword_slash_group.update()
             sword_slash_group.draw(screen)
-def neutral_phase():
+def neutral_phase_for_sword():
                 screen.fill((0,0,0))
                 screen.blit(robot_sword.image,robot_sword.rect)
                 screen.blit(play_combat_button.image,play_combat_button.rect)
@@ -392,8 +392,10 @@ def display_phase_for_sword():
                                 health_display()
         else:
                            screen.fill((0,0,0))
-                           neutral_phase()
+                           neutral_phase_for_sword()
                            health_display()                              
+
+
 
 
 
