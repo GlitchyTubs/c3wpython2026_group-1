@@ -11,6 +11,7 @@ import Sword_Slash
 import Play_Combat
 import Bombs
 
+
 WIDTH= 720
 HEIGHT= 720
 FPS= 30
@@ -74,7 +75,7 @@ def explode():
                                                           evade_player.hit_timer= 15
 
                                                   if phase_change == 1:
-                                                          evade_player.hit_timer = 100
+                                                          evade_player.hit_timer = 25
 
 
 
@@ -242,7 +243,6 @@ pygame.display.set_caption("Solum")
 clock = pygame.time.Clock()
 
 pixel_font = pygame.font.Font("Solum_assets/Minecraft.ttf", 36)
-
 
 
 
