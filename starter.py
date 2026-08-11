@@ -12,15 +12,24 @@ import Play_Combat
 import Bombs
 import Robot_Runner
 import Robot_Run
+import Robot_Laser
+import Laser_Beam
+import Punch_Impact
+import Robot_Punch
+import Punch_Wave
 
 WIDTH= 720
 HEIGHT= 720
 FPS= 30
 SLASH_EVENT = pygame.USEREVENT + 1
 EXPLODE_EVENT= pygame.USEREVENT + 3
+PUNCH_EVENT=pygame.USEREVENT+4
+SWITCH_WAVES= pygame.USEREVENT +5
+SWITCH_PUNCH= pygame.USEREVENT +6
 CHANGE_PHASE_EVENT = pygame.USEREVENT + 2
 PHASE_DURATION = 5000
 phase_change=1
+punch_phase_change=1
 phase_changed= False
 enemy_health = random.randint(15,30)
 player_health = 10
@@ -33,6 +42,28 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
 
+def change_punch_impact_and_waves():
+        global phase_change
+        global punch_phase_change
+        if event.type == CHANGE_PHASE_EVENT and phase_change ==0:
+                evade_player.rect.x = 10
+                evade_player.rect.y = 400
+
+                if punch_phase_change==1:
+                                                punch_phase_change=0
+                else:
+                                          punch_phase_change=1
+
+
+
+def punch_impact_and_waves():
+         if punch_phase_change==1:
+                                        punch_impact_evade_phase()
+                                        
+         if punch_phase_change==0:
+                                       punch_wave_evade_phase()
+                                        
+               
 
 
 
@@ -42,12 +73,55 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 def run_collision():
                  global player_health
                  if evade_player.hit_timer == 0:
-                     if pygame.sprite.spritecollide(evade_player,run_group,False):
+                     if pygame.sprite.spritecollide(evade_player, run_group, False, pygame.sprite.collide_mask):
                                                  player_health
                                                  player_health-=1
                                                  evade_player.hit_timer= 15
                                                  if phase_change == 1:
                                                     evade_player.hit_timer = 100
+
+
+def punch_wave_collision():
+                 global player_health
+                 if event.type == SWITCH_WAVES:
+                                     rand_wave=random.randint(1,4)
+                                     if rand_wave == 1:
+                                       punch_wave.image= pygame.image.load("Solum_assets/punch_wave1.png").convert_alpha()
+                                     elif rand_wave ==2:
+                                      punch_wave.image = pygame.image.load("Solum_assets/punch_wave2.png").convert_alpha()
+                                     elif rand_wave == 3:
+                                      punch_wave.image = pygame.image.load("Solum_assets/punch_wave3.png").convert_alpha()
+                 if evade_player.hit_timer == 0:
+                    if pygame.sprite.collide_mask(evade_player, punch_wave):
+                                                 global player_health
+                                                 player_health-=1
+                                                 evade_player.hit_timer= 15
+                                                 if phase_change == 1:
+                                                    evade_player.hit_timer = 100
+
+def laser_collision():
+                 global player_health
+                 if evade_player.hit_timer == 0:
+                     if pygame.sprite.spritecollide(evade_player,laser_group,False):
+                                                 player_health
+                                                 player_health-=1
+                                                 evade_player.hit_timer= 15
+                                                 if phase_change == 1:
+                                                    evade_player.hit_timer = 100
+
+
+def punch():
+                               if event.type == PUNCH_EVENT:
+                                        punch_impact.rect.x=random.randint(10,720)
+                                        punch_impact.rect.y= random.randint(300,720)
+                               if punch_impact.frame_index >= 3:
+                                         if evade_player.hit_timer == 0:
+                                                if pygame.sprite.spritecollide(evade_player,punch_group,False):
+                                                        global player_health
+                                                        player_health-=1
+                                                        evade_player.hit_timer= 15
+                                                if phase_change == 1:
+                                                        evade_player.hit_timer = 100
 
 
 def slash():
@@ -129,6 +203,38 @@ def sword_evade_phase():
             sword_slash_group.update()
             sword_slash_group.draw(screen)
 
+def punch_impact_evade_phase():
+            screen.fill((0,0,0))
+            evade_player.evade_speed =20
+            evade_player.rect.x = max(0, min(evade_player.rect.x, WIDTH - 50))
+            evade_player.rect.y = max(300, min(evade_player.rect.y, HEIGHT - 100))
+            evade_player.image= pygame.transform.scale(evade_player.image,(60,60))
+            screen.blit(evade_player.image,evade_player.rect)
+            robot_punch.update()
+            screen.blit(robot_punch.image,robot_punch.rect)
+            punch_group.update()
+            punch_group.draw(screen)
+def punch_wave_evade_phase():
+            screen.fill((0,0,0))
+            evade_player.evade_speed =10
+            evade_player.rect.x = max(0, min(evade_player.rect.x, WIDTH - 50))
+            evade_player.rect.y = max(400, min(evade_player.rect.y, HEIGHT - 100))
+            evade_player.image= pygame.transform.scale(evade_player.image,(40,40))
+            screen.blit(evade_player.image,evade_player.rect)
+            
+            robot_punch.update()
+            screen.blit(robot_punch.image,robot_punch.rect)
+            punch_wave.update()
+            screen.blit(punch_wave.image,punch_wave.rect)
+
+def laser_evade_phase():
+            screen.fill((0,0,0))
+            screen.blit(evade_player.image,evade_player.rect)
+            robot_laser.update()
+            screen.blit(robot_laser.image,robot_laser.rect)
+            laser_group.update()
+            laser_group.draw(screen)
+
 def bomb_evade_phase():
             screen.fill((0,0,0))
             screen.blit(evade_player.image,evade_player.rect)
@@ -140,7 +246,7 @@ def bomb_evade_phase():
 def run_evade_phase():
             screen.fill((0,0,0))
             screen.blit(evade_player.image,evade_player.rect)
-            robot_bomber.update()
+            robot_runner.update()
             screen.blit(robot_runner.image,robot_runner.rect)
             run_group.update()
             run_group.draw(screen)
@@ -149,6 +255,16 @@ def run_evade_phase():
 def neutral_phase_for_sword():
                 screen.fill((0,0,0))
                 screen.blit(robot_sword.image,robot_sword.rect)
+                screen.blit(play_combat_button.image,play_combat_button.rect)
+
+def neutral_phase_for_punch():
+                screen.fill((0,0,0))
+                screen.blit(robot_punch.image,robot_punch.rect)
+                screen.blit(play_combat_button.image,play_combat_button.rect)
+
+def neutral_phase_for_laser():
+                screen.fill((0,0,0))
+                screen.blit(robot_laser.image,robot_laser.rect)
                 screen.blit(play_combat_button.image,play_combat_button.rect)
 
 def neutral_phase_for_run():
@@ -211,6 +327,26 @@ def display_phase_for_sword():
                            neutral_phase_for_sword()
                            health_display()
 
+def display_phase_for_laser():
+        global combat_button_clicked
+        global phase_change
+        if combat_button_clicked:
+              
+                      
+                
+        
+                screen.fill((0,0,0))
+                if phase_change==1:
+                                attack_phase()
+                                health_display()
+                if phase_change==0:
+                                laser_evade_phase()
+                                health_display()
+        else:
+                           screen.fill((0,0,0))
+                           neutral_phase_for_laser()
+                           health_display()
+
 def display_phase_for_run():
         global combat_button_clicked
         global phase_change
@@ -229,6 +365,27 @@ def display_phase_for_run():
         else:
                            screen.fill((0,0,0))
                            neutral_phase_for_run()
+                           health_display()
+
+
+def display_phase_for_punch():
+        global combat_button_clicked
+        global phase_change
+        if combat_button_clicked:
+              
+                      
+                
+        
+                screen.fill((0,0,0))
+                if phase_change==1:
+                                attack_phase()
+                                health_display()
+                if phase_change==0:
+                                punch_impact_and_waves()
+                                health_display()
+        else:
+                           screen.fill((0,0,0))
+                           neutral_phase_for_punch()
                            health_display()
 
 
@@ -312,13 +469,21 @@ battle_objects4_group.add(battle_object4)
 robot_sword= Robot_Sword.Robot_Sword()
 robot_bomber= Robot_Bomber.Robot_Bomber()
 robot_runner= Robot_Runner.Robot_Runner()
+robot_laser= Robot_Laser.Robot_Laser()
+robot_punch= Robot_Punch.Robot_Punch()
+
+punch_wave= Punch_Wave.Punch_Wave()
 sword_slash_group= pygame.sprite.Group()
+laser_group= pygame.sprite.Group()
 bomb_group = pygame.sprite.Group()
 run_group = pygame.sprite.Group()
+punch_group= pygame.sprite.Group()
 play_combat_button= Play_Combat.Play_Combat_Button()
 
 
-
+for i in range (2):
+        punch_impact=Punch_Impact.Punch()
+        punch_group.add(punch_impact)
 for i in range(10):
     sword_slash= Sword_Slash.Sword_Slash()
     sword_slash_group.add(sword_slash)
@@ -331,11 +496,15 @@ for i in range(1):
         robot_run=Robot_Run.Robot_Run()
         run_group.add(robot_run)
 
+for i in range(3):
+        laser_beam=Laser_Beam.Laser_Beam()
+        laser_group.add(laser_beam)
+
 pygame.time.set_timer(SLASH_EVENT,  2000,loops=0)
 pygame.time.set_timer(EXPLODE_EVENT,  2000,loops=0)
-
-
-
+pygame.time.set_timer(PUNCH_EVENT,1000,loops=0)
+pygame.time.set_timer(SWITCH_WAVES,2000,loops=0)
+pygame.time.set_timer(SWITCH_PUNCH,10000,loops=0)
 
 running = True
 
@@ -355,7 +524,7 @@ while running:
         detect_mouse_button()
        
         change_phase()
-        
+        change_punch_impact_and_waves()
                                    
                                              
                                              
@@ -373,11 +542,19 @@ while running:
         for robot_run in run_group:
                             run_collision()
 
+        for laser_beam in laser_group:
+                                    laser_collision()
+
+        for punch_impact in punch_group:
+                punch()
+
+        punch_wave_collision()
+
     keys_evade = pygame.key.get_pressed()
     evade_player.move_evade(keys_evade)
 
 
-    display_phase_for_run()
+    display_phase_for_punch()
    
         
     
