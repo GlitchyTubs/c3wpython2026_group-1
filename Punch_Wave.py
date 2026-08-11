@@ -21,7 +21,7 @@ class Punch_Wave(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect()
                 self.rect.x= 650
                 self.rect.y= 300
-                self.speed = random.randint(10,20)
+                self.speed = random.randint(10,15)
 
                 
                         
@@ -34,7 +34,7 @@ class Punch_Wave(pygame.sprite.Sprite):
                                             
                                             self.rect.y= 300
                                             self.rect.x= 720
-                                            self.speed= random.randint(20,30)
+                                            self.speed= random.randint(10,15)
             self.animate()
         
         def animate(self):
