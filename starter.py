@@ -10,7 +10,8 @@ import Robot_Sword
 import Sword_Slash
 import Play_Combat
 import Bombs
-
+import Robot_Runner
+import Robot_Run
 
 WIDTH= 720
 HEIGHT= 720
@@ -38,7 +39,15 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
                
 
     
-
+def run_collision():
+                 global player_health
+                 if evade_player.hit_timer == 0:
+                     if pygame.sprite.spritecollide(evade_player,run_group,False):
+                                                 player_health
+                                                 player_health-=1
+                                                 evade_player.hit_timer= 15
+                                                 if phase_change == 1:
+                                                    evade_player.hit_timer = 100
 
 
 def slash():
@@ -128,10 +137,23 @@ def bomb_evade_phase():
             bomb_group.update()
             bomb_group.draw(screen)
 
+def run_evade_phase():
+            screen.fill((0,0,0))
+            screen.blit(evade_player.image,evade_player.rect)
+            robot_bomber.update()
+            screen.blit(robot_runner.image,robot_runner.rect)
+            run_group.update()
+            run_group.draw(screen)
+
 
 def neutral_phase_for_sword():
                 screen.fill((0,0,0))
                 screen.blit(robot_sword.image,robot_sword.rect)
+                screen.blit(play_combat_button.image,play_combat_button.rect)
+
+def neutral_phase_for_run():
+                screen.fill((0,0,0))
+                screen.blit(robot_runner.image,robot_runner.rect)
                 screen.blit(play_combat_button.image,play_combat_button.rect)
 
 def neutral_phase_for_bomb():
@@ -187,6 +209,26 @@ def display_phase_for_sword():
         else:
                            screen.fill((0,0,0))
                            neutral_phase_for_sword()
+                           health_display()
+
+def display_phase_for_run():
+        global combat_button_clicked
+        global phase_change
+        if combat_button_clicked:
+              
+                      
+                
+        
+                screen.fill((0,0,0))
+                if phase_change==1:
+                                attack_phase()
+                                health_display()
+                if phase_change==0:
+                                run_evade_phase()
+                                health_display()
+        else:
+                           screen.fill((0,0,0))
+                           neutral_phase_for_run()
                            health_display()
 
 
@@ -269,9 +311,13 @@ battle_objects4_group.add(battle_object4)
 
 robot_sword= Robot_Sword.Robot_Sword()
 robot_bomber= Robot_Bomber.Robot_Bomber()
+robot_runner= Robot_Runner.Robot_Runner()
 sword_slash_group= pygame.sprite.Group()
 bomb_group = pygame.sprite.Group()
+run_group = pygame.sprite.Group()
 play_combat_button= Play_Combat.Play_Combat_Button()
+
+
 
 for i in range(10):
     sword_slash= Sword_Slash.Sword_Slash()
@@ -281,6 +327,9 @@ for i in range(2):
         bomb=Bombs.Bombs()
         bomb_group.add(bomb)
 
+for i in range(1):
+        robot_run=Robot_Run.Robot_Run()
+        run_group.add(robot_run)
 
 pygame.time.set_timer(SLASH_EVENT,  2000,loops=0)
 pygame.time.set_timer(EXPLODE_EVENT,  2000,loops=0)
@@ -319,13 +368,16 @@ while running:
                             slash()
 
         for bomb in bomb_group:
-                            explode() 
+                            explode()
+
+        for robot_run in run_group:
+                            run_collision()
 
     keys_evade = pygame.key.get_pressed()
     evade_player.move_evade(keys_evade)
 
 
-    display_phase_for_bomb()
+    display_phase_for_run()
    
         
     
