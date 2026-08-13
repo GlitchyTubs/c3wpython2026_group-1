@@ -1,7 +1,7 @@
 # Modules
 import pygame
 import os
-
+import Main_Game
 
 # Search for files
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -11,6 +11,7 @@ pygame.mixer.init()
 
 
 # -----------------------------------
+game_start=False
 # Constants
 
 # Screen size
@@ -211,6 +212,7 @@ muted_music = False
 
 while running:
 
+
     # Gets the position of the mouse
     mouse_pos = pygame.mouse.get_pos()
 
@@ -220,6 +222,12 @@ while running:
         if event.type == pygame.QUIT:
             pygame.mixer.music.stop()
             running = False
+        
+
+
+
+
+
 
 
         # Checks for mouse input
@@ -227,14 +235,14 @@ while running:
             if event.button == 1:  
 
                 # If the user clicks the 'Play' Button
-                if mainmenu == "Main Menu":
+                if mainmenu == "Main Menu" and game_start==False:
                     if playbutton.press(mouse_pos):
                         print("Entering the game...")
 
                         # Add start screen here! ! !
 
                         mainmenu = "Solum Game"
-
+                        game_start=True
                     elif settingsbutton.press(mouse_pos):
                         print("Displaying settings...")
                         mainmenu = "Settings"
@@ -291,12 +299,12 @@ while running:
 
 
     # Game screen
-    elif mainmenu == "Solum Game":
+    elif mainmenu == "Solum Game" and game_start==True:
         screen.fill(BLACK)
-
-        # This is where the game will start...
-        start = game_font.render("Game here...", True, (255,255,255))
-        screen.blit(start,((WIDTH-start.get_width())//2, 280))
+        Main_Game.start_game()
+        # # This is where the game will start...
+        # start = game_font.render("Game here...", True, (255,255,255))
+        # screen.blit(start,((WIDTH-start.get_width())//2, 280))
 
     # Settings screen
     elif mainmenu == "Settings":

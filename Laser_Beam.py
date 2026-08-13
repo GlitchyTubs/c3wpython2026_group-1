@@ -27,7 +27,7 @@ class Laser_Beam(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect()
                 self.rect.x= 650
                 self.rect.y= random.randint(300,690)
-                self.speed = random.randint(30,50)
+                self.speed = random.randint(20,30)
         def update(self):
                   self.animate()
         
@@ -43,6 +43,6 @@ class Laser_Beam(pygame.sprite.Sprite):
                   if self.rect.x <= 0:
                             self.rect.y= random.randint(300,690)
                             self.rect.x= random.randint(750,900)
-                            self.speed= random.randint(30,50)
+                            self.speed= random.randint(20,30)
 
         
