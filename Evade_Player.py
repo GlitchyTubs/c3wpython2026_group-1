@@ -16,7 +16,7 @@ class Evade_Player(pygame.sprite.Sprite):
 
 
             self.rect.x=20
-            self.rect.y=400
+            self.rect.y=300
             self.evade_speed = 20
             self.hit_timer= 0
 
