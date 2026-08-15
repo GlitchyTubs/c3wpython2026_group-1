@@ -31,7 +31,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 # Checks to see if background image is present
 try:
                                         # Enter background image here! 
-    background_image = pygame.image.load("IMAGE HERE").convert()
+    background_image = pygame.image.load("Solum_assets/Steel_Background.jpeg").convert()
 
     # If present, transforms the image to be able to fit in the game window
     background = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
@@ -49,7 +49,7 @@ except Exception:
 # Checks if the audio for background music is present
 try:
     # The mp3 file is a test to see if this code works
-    pygame.mixer.music.load("AUDIO HERE") # <--- Enter the audio file (.mp3 / .ogg) here!
+    pygame.mixer.music.load("Solum_assets/background_music.mp3") # <--- Enter the audio file (.mp3 / .ogg) here!
 
     # Plays the music (-1 plays it endlessly)
     pygame.mixer.music.play(-1)
@@ -71,8 +71,8 @@ pygame.display.set_caption("Solum")
 
 # Checks if custom fonts are present
 try:
-    title_font = pygame.font.Font("FONT HERE", 90)
-    option_font = pygame.font.Font("FONT HERE", 35)
+    title_font = pygame.font.Font("Solum_assets/Minecraft.ttf", 90)
+    option_font = pygame.font.Font("Solum_assets/Minecraft.ttf", 35)
 
 # If not found, use a backup font 'Arial'
 except FileNotFoundError:
@@ -89,7 +89,7 @@ game_font = pygame.font.SysFont("Arial", 25)
 #           <BUTTONS>
 # Class
 class Button():                                                 # Paste audios files for button hover / press (.wav files) !
-    def __init__(self, x, y, width, height, text, color, button_hover = "AUDIO HERE", button_press = "AUDIO HERE"):
+    def __init__(self, x, y, width, height, text, color, button_hover = "Solum_assets/Button_Hover.wav", button_press = "Solum_assets/Button_Press.mp3"):
         self.x = x
         self.y = y
         self.width = width
@@ -289,7 +289,7 @@ while running:
     if mainmenu == "Main Menu":
            
         # Title Font
-        menu_title = title_font.render("< Solum >", True, (0, 105, 250))
+        menu_title = title_font.render("< Solum >", True, (0, 0, 0))
         screen.blit(menu_title,((WIDTH-menu_title.get_width())//2, 75))
  
         # Creates the buttons on the game window
@@ -309,7 +309,7 @@ while running:
     # Settings screen
     elif mainmenu == "Settings":
         # Title Font
-        setting = title_font.render("< Settings >", True, (0, 105, 250))
+        setting = title_font.render("< Settings >", True, (0, 0, 0))
         screen.blit(setting,((WIDTH-setting.get_width())//2, 75))
 
         # Changes the text of the 'mute music' button depending on current state
