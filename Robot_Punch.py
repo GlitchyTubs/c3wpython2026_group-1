@@ -24,7 +24,7 @@ class Robot_Punch(pygame.sprite.Sprite):
                 self.animation_speed=0.2
                 self.image = pygame.image.load("Solum_assets/robot_punch1.png").convert_alpha()
                 self.rect = self.image.get_rect()
-                self.rect.x= 200
+                self.rect.x= 250
                 self.rect.y= 40
         def update(self):
                   self.animate()
