@@ -14,8 +14,8 @@ class Play_Combat_Button(pygame.sprite.Sprite):
                 super().__init__()
         
    
-                self.image = pygame.image.load("Solum_assets/FIGHT_CLICK.png").convert_alpha()
-                self.image= pygame.transform.scale(self.image,(400,100))
+                self.image = pygame.image.load("Solum_assets/PLAY_COMBAT_1.png").convert_alpha()
+                self.image= pygame.transform.scale(self.image,(400,150))
                 self.rect = self.image.get_rect()
                 self.rect.x= 150
-                self.rect.y= 400
+                self.rect.y= 550

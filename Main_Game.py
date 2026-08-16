@@ -38,13 +38,19 @@ def start_game():
         punch_phase_change=1
         active_shield= False
         enemy_health = random.randint(15,30)
-        player_health = 10
+        player_health = 15
         combat_button_clicked = False
         phase_start_time = pygame.time.get_ticks()
         # attack_mode= False
         # player_turn= False
 
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+        def i_frames():
+                if phase_change == 1:
+                        evade_player.hit_timer = 25  
+
+
 
 
         def is_shield_active():
@@ -73,15 +79,20 @@ def start_game():
                 nonlocal active_shield
                 if active_shield:
                   if pygame.sprite.spritecollide(player_shield,punch_group,True):
+                                
                         
                                 active_shield=False
                                 player_shield.rect.x+=-1000
                                 for i in range (1):
                                                 punch_red=PUNCH_RED.Robot_Punch_Red()
                                                 punch_group.add(punch_red)
-                if pygame.sprite.spritecollide(evade_player,punch_group,True):
-                                                #PLAYER HITS OBJECT
-                    player_health-=1           
+                if evade_player.hit_timer == 0:
+                 if pygame.sprite.spritecollide(evade_player, punch_group, True, pygame.sprite.collide_mask):
+                                                
+                    player_health-=1
+                    evade_player.hit_timer= 15
+                    
+                           
                     for i in range (1):
                         punch_red=PUNCH_RED.Robot_Punch_Red()
                         punch_group.add(punch_red)
@@ -104,6 +115,7 @@ def start_game():
         def punch_impact_and_waves():
                 if punch_phase_change==1:
                                 punch_impact_evade_phase()
+                                punch_wave.rect.x+=-1000
                                         
                 if punch_phase_change==0:
                                 punch_wave_evade_phase()
@@ -121,14 +133,13 @@ def start_game():
                      if pygame.sprite.spritecollide(evade_player, run_group, False, pygame.sprite.collide_mask):
                                                  player_health
                                                  player_health-=1
-                                                 evade_player.hit_timer= 15
-                                                 if phase_change == 1:
-                                                    evade_player.hit_timer = 100
+                                                 evade_player.hit_timer= 5
+                                                 
 
 
         def punch_wave_collision():
                  nonlocal player_health
-                 if event.type == SWITCH_WAVES:
+                 if event.type == SWITCH_WAVES and phase_change == 1:
                                      rand_wave=random.randint(1,4)
                                      if rand_wave == 1:
                                        punch_wave.image= pygame.image.load("Solum_assets/punch_wave1.png").convert_alpha()
@@ -137,22 +148,26 @@ def start_game():
                                      elif rand_wave == 3:
                                       punch_wave.image = pygame.image.load("Solum_assets/punch_wave3.png").convert_alpha()
                  if evade_player.hit_timer == 0:
+                    
+                   
+                               
                     if pygame.sprite.collide_mask(evade_player, punch_wave):
 
                                                  player_health-=1
                                                  evade_player.hit_timer= 15
-                                                 if phase_change == 1:
-                                                    evade_player.hit_timer = 100
-
+                                                 
+                                                         
         def laser_collision():
                  nonlocal player_health
                  if evade_player.hit_timer == 0:
-                     if pygame.sprite.spritecollide(evade_player,laser_group,False):
+                     if pygame.sprite.spritecollide(evade_player,laser_group,True):
                                                  
                                                  player_health-=1
-                                                 evade_player.hit_timer= 15
-                                                 if phase_change == 1:
-                                                    evade_player.hit_timer = 100
+                                                 evade_player.hit_timer= 5
+                                                 
+                                                 for i in range(1):
+                                                                laser_beam=Laser_Beam.Laser_Beam()
+                                                                laser_group.add(laser_beam)
 
 
 
@@ -168,8 +183,7 @@ def start_game():
                                                 nonlocal player_health
                                                 player_health-=1
                                                 evade_player.hit_timer= 15
-                                        if phase_change == 1:
-                                                evade_player.hit_timer = 100
+                                        
 
                        
 
@@ -189,12 +203,15 @@ def start_game():
                                                           player_health-=1
                                                           evade_player.hit_timer= 15
 
-                                                  if phase_change == 1:
-                                                          evade_player.hit_timer = 25
+                                                  
 
 
 
-
+        def punch_boundaries():
+                if evade_player.rect.x > 150:
+                        if keys_evade[pygame.K_RIGHT]:
+                                                evade_player.rect.x -= evade_player.evade_speed
+                        
                           
 
 
@@ -237,6 +254,7 @@ def start_game():
 
         def punch_impact_evade_phase():
             screen.fill((0,0,0))
+            punch_boundaries()
             evade_player.evade_speed =20
             evade_player.rect.x = max(0, min(evade_player.rect.x, WIDTH - 50))
             evade_player.rect.y = max(300, min(evade_player.rect.y, HEIGHT - 100))
@@ -262,6 +280,7 @@ def start_game():
 
         def laser_evade_phase():
             screen.fill((0,0,0))
+            punch_boundaries()
             screen.blit(evade_player.image,evade_player.rect)
             robot_laser.update()
             screen.blit(robot_laser.image,robot_laser.rect)
@@ -291,7 +310,12 @@ def start_game():
                 screen.blit(play_combat_button.image,play_combat_button.rect)
 
         def neutral_phase_for_punch():
+                
                 screen.fill((0,0,0))
+                player_punch_1= pixel_font.render(f"PRESS 'F'", True, (255, 255, 255))
+                player_punch_2= pixel_font.render(f"TO FIRE FIST", True, (255, 255, 255))
+                screen.blit(player_punch_1,(450,10))
+                screen.blit(player_punch_2,(450,50))
                 screen.blit(robot_punch.image,robot_punch.rect)
                 screen.blit(play_combat_button.image,play_combat_button.rect)
 
@@ -535,7 +559,7 @@ def start_game():
                 robot_run=Robot_Run.Robot_Run()
                 run_group.add(robot_run)
 
-        for i in range(3):
+        for i in range(2):
                 laser_beam=Laser_Beam.Laser_Beam()
                 laser_group.add(laser_beam)
 
@@ -562,6 +586,7 @@ def start_game():
                           running = False
 
                         detect_mouse_button()
+                        i_frames()
                 
                         change_phase()
                         shield_follow(event) 
@@ -595,7 +620,7 @@ def start_game():
                 evade_player.move_evade(keys_evade)
 
 
-                display_phase_for_punch()
+                # display_phase_for_punch()
         
                 
         
