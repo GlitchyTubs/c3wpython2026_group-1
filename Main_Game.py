@@ -21,6 +21,8 @@ def start_game():
         import Punch_Impact
         import Robot_Punch
         import Punch_Wave
+        import Player_Shield
+        import PUNCH_RED
 
         WIDTH= 720
         HEIGHT= 720
@@ -34,7 +36,7 @@ def start_game():
         PHASE_DURATION = 5000
         phase_change=1
         punch_phase_change=1
-        phase_changed= False
+        active_shield= False
         enemy_health = random.randint(15,30)
         player_health = 10
         combat_button_clicked = False
@@ -45,7 +47,46 @@ def start_game():
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
+        def is_shield_active():
+                nonlocal active_shield
+                if active_shield:
+                        player_shield.update()
+                        if player_shield.rect.x > 720:
+                                active_shield = False
 
+                else:
+                        player_shield.rect.x = -1000
+        
+        def shield_follow(event):
+                
+                nonlocal active_shield
+                if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_f:
+                                if not active_shield:
+                                        active_shield=True
+                                        player_shield.rect.center = evade_player.rect.center
+                                        
+                                
+                        
+        def shield_collision():
+                nonlocal player_health
+                nonlocal active_shield
+                if active_shield:
+                  if pygame.sprite.spritecollide(player_shield,punch_group,True):
+                        
+                                active_shield=False
+                                player_shield.rect.x+=-1000
+                                for i in range (1):
+                                                punch_red=PUNCH_RED.Robot_Punch_Red()
+                                                punch_group.add(punch_red)
+                if pygame.sprite.spritecollide(evade_player,punch_group,True):
+                                                #PLAYER HITS OBJECT
+                    player_health-=1           
+                    for i in range (1):
+                        punch_red=PUNCH_RED.Robot_Punch_Red()
+                        punch_group.add(punch_red)
+
+        
         def change_punch_impact_and_waves():
                 nonlocal phase_change
                 nonlocal punch_phase_change
@@ -107,25 +148,12 @@ def start_game():
                  nonlocal player_health
                  if evade_player.hit_timer == 0:
                      if pygame.sprite.spritecollide(evade_player,laser_group,False):
-                                                 player_health
+                                                 
                                                  player_health-=1
                                                  evade_player.hit_timer= 15
                                                  if phase_change == 1:
                                                     evade_player.hit_timer = 100
 
-
-        def punch():
-                               if event.type == PUNCH_EVENT:
-                                        punch_impact.rect.x=random.randint(10,720)
-                                        punch_impact.rect.y= random.randint(300,720)
-                               if punch_impact.frame_index >= 3:
-                                         if evade_player.hit_timer == 0:
-                                                if pygame.sprite.spritecollide(evade_player,punch_group,False):
-                                                        nonlocal player_health
-                                                        player_health-=1
-                                                        evade_player.hit_timer= 15
-                                                if phase_change == 1:
-                                                        evade_player.hit_timer = 150
 
 
         def slash():
@@ -137,7 +165,7 @@ def start_game():
                         if sword_slash.frame_index >= 3:
                                 if evade_player.hit_timer == 0:
                                         if pygame.sprite.spritecollide(evade_player,sword_slash_group,False):
-                                                global player_health
+                                                nonlocal player_health
                                                 player_health-=1
                                                 evade_player.hit_timer= 15
                                         if phase_change == 1:
@@ -157,7 +185,7 @@ def start_game():
                                   if bomb.frame_index >= 3:
                                           if evade_player.hit_timer == 0:
                                                   if pygame.sprite.spritecollide(evade_player,bomb_group,False):
-                                                          global player_health
+                                                          nonlocal player_health
                                                           player_health-=1
                                                           evade_player.hit_timer= 15
 
@@ -214,6 +242,7 @@ def start_game():
             evade_player.rect.y = max(300, min(evade_player.rect.y, HEIGHT - 100))
             evade_player.image= pygame.transform.scale(evade_player.image,(60,60))
             screen.blit(evade_player.image,evade_player.rect)
+            screen.blit(player_shield.image,player_shield.rect)
             robot_punch.update()
             screen.blit(robot_punch.image,robot_punch.rect)
             punch_group.update()
@@ -452,6 +481,7 @@ def start_game():
 
         attack_player= Battle_Player.Battle_Player()
         evade_player= Evade_Player.Evade_Player()
+        player_shield= Player_Shield.Player_Shield()
 
         battle_objects1_group= pygame.sprite.Group()
         battle_object1= Battle_Object.BO_1()
@@ -476,18 +506,23 @@ def start_game():
         robot_laser= Robot_Laser.Robot_Laser()
         robot_punch= Robot_Punch.Robot_Punch()
 
+        
         punch_wave= Punch_Wave.Punch_Wave()
         sword_slash_group= pygame.sprite.Group()
         laser_group= pygame.sprite.Group()
         bomb_group = pygame.sprite.Group()
+        
         run_group = pygame.sprite.Group()
         punch_group= pygame.sprite.Group()
         play_combat_button= Play_Combat.Play_Combat_Button()
 
 
-        for i in range (2):
-                punch_impact=Punch_Impact.Punch()
-                punch_group.add(punch_impact)
+        
+
+
+        for i in range (3):
+                punch_red=PUNCH_RED.Robot_Punch_Red()
+                punch_group.add(punch_red)
         for i in range(10):
                 sword_slash= Sword_Slash.Sword_Slash()
                 sword_slash_group.add(sword_slash)
@@ -529,10 +564,10 @@ def start_game():
                         detect_mouse_button()
                 
                         change_phase()
+                        shield_follow(event) 
                         change_punch_impact_and_waves()
                                         
-                                                
-                                                
+                                    
 
                         if event.type == pygame.KEYDOWN:
                                 keys_attack = pygame.key.get_pressed()
@@ -550,9 +585,10 @@ def start_game():
                         for laser_beam in laser_group:
                                         laser_collision()
 
-                        for punch_impact in punch_group:
-                              punch()
-
+                        
+                            
+                is_shield_active()                       
+                shield_collision() 
                 punch_wave_collision()
 
                 keys_evade = pygame.key.get_pressed()
@@ -581,5 +617,3 @@ def start_game():
         clock.tick(30)
 
         pygame.quit()
-
-
