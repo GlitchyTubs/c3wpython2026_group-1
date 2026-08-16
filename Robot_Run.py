@@ -41,7 +41,7 @@ class Robot_Run(pygame.sprite.Sprite):
                   self.image=self.frames[int(self.frame_index)]
                                
                   if self.rect.x <= 0:
-                            self.rect.y= random.randint(300,690)
+                            self.rect.y= random.randint(300,600)
                             self.rect.x= random.randint(750,900)
                             self.speed= random.randint(20,30)
 

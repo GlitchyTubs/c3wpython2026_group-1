@@ -21,16 +21,20 @@ class Punch(pygame.sprite.Sprite):
                                                pygame.image.load("Solum_assets/sword_warning.png").convert_alpha(),
                                                pygame.image.load("Solum_assets/sword_warning.png").convert_alpha(),
                                                pygame.image.load("Solum_assets/sword_warning.png").convert_alpha(),
+                                               pygame.image.load("Solum_assets/sword_warning.png").convert_alpha(),
                                                pygame.image.load("Solum_assets/sword_warning.png").convert_alpha(), 
                                                pygame.image.load("Solum_assets/punch_1.png").convert_alpha(),
                                                pygame.image.load("Solum_assets/punch_2.png").convert_alpha(),
                                              
                                                
                                                ]
+                         
+
+                         
                  
                          self.frame_index=0
                          
-                         self.animation_speed=0.49
+                         self.animation_speed=0.30
                          
                          
                          
@@ -39,6 +43,8 @@ class Punch(pygame.sprite.Sprite):
          
                          self.rect.x= random.randint(10,600)
                          self.rect.y= random.randint(300,600)
+                         
+
           def update(self):
                          self.animate()
                          
@@ -51,3 +57,4 @@ class Punch(pygame.sprite.Sprite):
                            if self.frame_index > len(self.frames):
                              self.frame_index=0
                            self.image=self.frames[int(self.frame_index)]
+                           

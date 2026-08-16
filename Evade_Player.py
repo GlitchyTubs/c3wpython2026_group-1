@@ -13,7 +13,7 @@ class Evade_Player(pygame.sprite.Sprite):
 
             self.image = pygame.image.load("Solum_assets/BATTLE_PLAYER.png").convert_alpha()
             self.rect = self.image.get_rect()
-
+            self.hitbox = self.rect.inflate(-10,-16)
 
             self.rect.x=20
             self.rect.y=300
@@ -43,3 +43,4 @@ class Evade_Player(pygame.sprite.Sprite):
     def update_timer(self):
                 if self.hit_timer > 0:
                     self.hit_timer -= 1
+    
