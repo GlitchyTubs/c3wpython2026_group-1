@@ -620,7 +620,7 @@ def start_game():
                 evade_player.move_evade(keys_evade)
 
 
-                # display_phase_for_punch()
+                display_phase_for_punch()
         
                 
         
