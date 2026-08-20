@@ -1,7 +1,9 @@
+
+       
+
+
+
 def start_game():
-
-
-
         import pygame
         import random
         import os
@@ -23,6 +25,12 @@ def start_game():
         import Punch_Wave
         import Player_Shield
         import PUNCH_RED
+        import Floor_Enemy
+        import Floor_Player
+
+
+
+         
 
         WIDTH= 720
         HEIGHT= 720
@@ -39,13 +47,112 @@ def start_game():
         active_shield= False
         enemy_health = random.randint(15,30)
         player_health = 15
+        floor_number=1
+        game_state="Floor"
         combat_button_clicked = False
         phase_start_time = pygame.time.get_ticks()
         # attack_mode= False
         # player_turn= False
 
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        
+        screen = pygame.display.set_mode((720, 720))
+        clock= pygame.time.Clock()
 
+        background_image = pygame.image.load("Solum_assets/Floors_Back.jpeg").convert()
+        background = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+        win_image= pygame.image.load("Solum_assets/WIN_SCREEN.png").convert()
+        win_screen= pygame.transform.scale(win_image, (WIDTH, HEIGHT))
+
+
+        def Floors():
+                
+                screen.blit(background,(0,0))
+                screen.blit(rand_enemy.image,rand_enemy.rect)
+                floor_player.update()
+                screen.blit(floor_player.image,floor_player.rect)
+
+        def Floor_Change_Player():
+                nonlocal floor_number
+                nonlocal player_health
+                nonlocal game_state
+                if player_health <=0 and floor_number==1:
+                        game_state="Floor"
+                        floor_player.rect.x= 200
+                        floor_player.rect.y= 200
+                        floor_number=1
+                        player_health=15
+                        rand_enemy.change_enemy()
+                               
+                        pygame.display.flip()
+                if player_health <=0 and floor_number >1: 
+                                game_state="Floor"  
+                                floor_player.rect.x= 200
+                                floor_player.rect.y= 200   
+                                floor_number-=1
+                                player_health=15
+                                rand_enemy.change_enemy()
+                                
+                                pygame.display.flip()
+               
+                        
+                        
+        
+        def Floor_Change_Enemy():
+                nonlocal enemy_health
+                nonlocal player_health
+                nonlocal floor_number
+                nonlocal game_state
+                if enemy_health <=0:
+                        game_state="Floor"
+                        floor_player.rect.x= 300
+                        floor_player.rect.y= 50
+                        floor_number+=1
+                        enemy_health = random.randint(15,30)
+                        player_health=15
+                        rand_enemy.change_enemy()
+                        
+                        pygame.display.flip()
+
+        def Enemy_Collision():
+                nonlocal game_state
+                if pygame.sprite.collide_rect(floor_player, rand_enemy):
+                        game_state="Game"
+                        if rand_enemy.rand_enemy==1:
+                        
+                                display_phase_for_sword()
+               
+                        elif rand_enemy.rand_enemy==2:
+                        
+                                display_phase_for_run()
+     
+                        elif rand_enemy.rand_enemy==3:
+                        
+                                display_phase_for_laser()
+     
+                        elif rand_enemy.rand_enemy==4:
+                        
+                                display_phase_for_bomb()
+                        elif rand_enemy.rand_enemy==5:
+                        
+                                display_phase_for_punch()
+
+
+
+        rand_enemy= Floor_Enemy.Floor_Enemy()
+        floor_player= Floor_Player.Floor_Player()
+
+
+
+
+        def game_win():
+                nonlocal floor_number
+                if floor_number > 5:
+                        screen.blit(win_screen,(0,0))
+
+
+
+        
         def i_frames():
                 if phase_change == 1:
                         evade_player.hit_timer = 25  
@@ -343,6 +450,10 @@ def start_game():
             screen.blit(player_health_text,(10,10))
             screen.blit(enemy_health_text,(10,50))
 
+        def current_floor_text():
+                nonlocal floor_number
+                floor_text= pixel_font.render(f"Current Floor: {floor_number}", True, (255, 255, 255))
+                screen.blit(floor_text,(10,10))
 
 
         def detect_mouse_button():
@@ -574,10 +685,9 @@ def start_game():
 
 
 
-
+        
         while running:
         
-        #Clock
                 clock.tick(FPS)
                 mouse_pos= pygame.mouse.get_pos()
                 #Events
@@ -604,10 +714,10 @@ def start_game():
                         for bomb in bomb_group:
                                 explode()
 
-                        for robot_run in run_group:
+                for robot_run in run_group:
                                 run_collision()
 
-                        for laser_beam in laser_group:
+                for laser_beam in laser_group:
                                         laser_collision()
 
                         
@@ -619,8 +729,18 @@ def start_game():
                 keys_evade = pygame.key.get_pressed()
                 evade_player.move_evade(keys_evade)
 
+                
+                
 
-                # display_phase_for_punch()
+                Enemy_Collision()
+
+                Floor_Change_Player()
+                Floor_Change_Enemy()
+                if game_state== "Floor":
+                     keys = pygame.key.get_pressed()
+                     floor_player.move_floor(keys)
+                     Floors()
+                     current_floor_text()
         
                 
         
@@ -628,17 +748,18 @@ def start_game():
                                                 
         
         
-                
+                game_win()
                 evade_player.update_timer()
                 player_attack()
                 evade_player.boudaries() 
-        
+                floor_player.boudaries()
                 
                         
 
                 pygame.display.flip()
+               
                 
                         
-        clock.tick(30)
+      
 
         pygame.quit()
