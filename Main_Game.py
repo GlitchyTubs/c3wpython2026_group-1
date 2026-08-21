@@ -75,13 +75,17 @@ def start_game():
         def Floor_Change_Player():
                 nonlocal floor_number
                 nonlocal player_health
+                nonlocal enemy_health
                 nonlocal game_state
+                nonlocal combat_button_clicked
                 if player_health <=0 and floor_number==1:
                         game_state="Floor"
                         floor_player.rect.x= 200
                         floor_player.rect.y= 200
                         floor_number=1
                         player_health=15
+                        combat_button_clicked = False
+                        enemy_health=random.randint(15,30)
                         rand_enemy.change_enemy()
                                
                         pygame.display.flip()
@@ -91,6 +95,9 @@ def start_game():
                                 floor_player.rect.y= 200   
                                 floor_number-=1
                                 player_health=15
+                                combat_button_clicked = False
+                                enemy_health=random.randint(15,30)
+
                                 rand_enemy.change_enemy()
                                 
                                 pygame.display.flip()
@@ -103,6 +110,7 @@ def start_game():
                 nonlocal player_health
                 nonlocal floor_number
                 nonlocal game_state
+                nonlocal combat_button_clicked
                 if enemy_health <=0:
                         game_state="Floor"
                         floor_player.rect.x= 300
@@ -110,6 +118,7 @@ def start_game():
                         floor_number+=1
                         enemy_health = random.randint(15,30)
                         player_health=15
+                        combat_button_clicked = False
                         rand_enemy.change_enemy()
                         
                         pygame.display.flip()
@@ -117,25 +126,32 @@ def start_game():
         def Enemy_Collision():
                 nonlocal game_state
                 if pygame.sprite.collide_rect(floor_player, rand_enemy):
-                        game_state="Game"
-                        if rand_enemy.rand_enemy==1:
+                                game_state="Game"
                         
-                                display_phase_for_sword()
-               
-                        elif rand_enemy.rand_enemy==2:
-                        
-                                display_phase_for_run()
-     
-                        elif rand_enemy.rand_enemy==3:
-                        
-                                display_phase_for_laser()
-     
-                        elif rand_enemy.rand_enemy==4:
-                        
-                                display_phase_for_bomb()
-                        elif rand_enemy.rand_enemy==5:
-                        
-                                display_phase_for_punch()
+                                if rand_enemy.rand_enemy==1:
+                                        if game_state=="Game":
+                                        
+                                        
+                                            display_phase_for_sword()
+                
+                                elif rand_enemy.rand_enemy==2:
+                                  if game_state=="Game":
+                                
+                                        display_phase_for_run()
+        
+                                elif rand_enemy.rand_enemy==3:
+                                  if game_state=="Game":
+                                
+                                        display_phase_for_laser()
+        
+                                elif rand_enemy.rand_enemy==4:
+                                  if game_state=="Game":
+                                
+                                        display_phase_for_bomb()
+                                elif rand_enemy.rand_enemy==5:
+                                 if game_state=="Game":
+                                
+                                        display_phase_for_punch()
 
 
 
@@ -226,7 +242,7 @@ def start_game():
                                         
                 if punch_phase_change==0:
                                 punch_wave_evade_phase()
-                                        
+                                punch_red.rect.x+=-1000
                
 
 
